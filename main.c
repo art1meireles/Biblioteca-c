@@ -15,7 +15,10 @@ void mostrar_menu(void) {
 }
 
 int main(void) {
-    carregar_do_arquivo();
+    Livro livros[MAX_LIVROS];
+    int total_livros = 0;
+
+    carregar_do_arquivo(livros, &total_livros);
     printf("Biblioteca iniciada. %d livro(s) carregado(s).\n", total_livros);
 
     int opcao;
@@ -28,25 +31,25 @@ int main(void) {
 
         switch (opcao) {
             case 1:
-                cadastrar_livro();
+                cadastrar_livro(livros, &total_livros);
                 break;
             case 2:
-                listar_livros();
+                listar_livros(livros, total_livros);
                 break;
             case 3:
-                buscar_livro();
+                buscar_livro(livros, total_livros);
                 break;
             case 4:
-                emprestar_livro();
+                emprestar_livro(livros, total_livros);
                 break;
             case 5:
-                devolver_livro();
+                devolver_livro(livros, total_livros);
                 break;
             case 6:
-                remover_livro();
+                remover_livro(livros, &total_livros);
                 break;
             case 7:
-                salvar_em_arquivo();
+                salvar_em_arquivo(livros, total_livros);
                 printf("Ate logo!\n");
                 continuar = 0;
                 break;

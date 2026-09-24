@@ -3,9 +3,6 @@
 #include <stdlib.h>
 #include "livro.h"
 
-Livro livros[MAX_LIVROS];
-int total_livros = 0;
-
 void ler_texto(char *destino) {
     scanf(" %99[^\n]", destino);
 }
@@ -32,7 +29,7 @@ int contem(const char *texto, const char *termo) {
     return 0;
 }
 
-int procurar_por_id(int id) {
+int procurar_por_id(Livro livros[], int total_livros, int id) {
     for (int i = 0; i < total_livros; i++) {
         if (livros[i].id == id) {
             return i;
@@ -41,14 +38,14 @@ int procurar_por_id(int id) {
     return -1;
 }
 
-void cadastrar_livro(void) {
-    if (total_livros >= MAX_LIVROS) {
+void cadastrar_livro(Livro livros[], int *total_livros) {
+    if (*total_livros >= MAX_LIVROS) {
         printf("Biblioteca cheia! Nao e possivel cadastrar mais livros.\n");
         return;
     }
 
     Livro novo;
-    novo.id = total_livros + 1;
+    novo.id = *total_livros + 1;
 
     printf("Titulo: ");
     ler_texto(novo.titulo);
@@ -62,13 +59,13 @@ void cadastrar_livro(void) {
 
     novo.emprestado = 0;
 
-    livros[total_livros] = novo;
-    total_livros++;
+    livros[*total_livros] = novo;
+    (*total_livros)++;
 
     printf("Livro cadastrado com sucesso! (id = %d)\n", novo.id);
 }
 
-void listar_livros(void) {
+void listar_livros(Livro livros[], int total_livros) {
     if (total_livros == 0) {
         printf("Nenhum livro cadastrado ainda.\n");
         return;
@@ -86,7 +83,7 @@ void listar_livros(void) {
     }
 }
 
-void buscar_livro(void) {
+void buscar_livro(Livro livros[], int total_livros) {
     char termo[TAM_TEXTO];
     printf("Digite parte do titulo: ");
     ler_texto(termo);
@@ -106,13 +103,13 @@ void buscar_livro(void) {
     }
 }
 
-void emprestar_livro(void) {
+void emprestar_livro(Livro livros[], int total_livros) {
     int id;
     printf("Digite o ID do livro: ");
     scanf("%d", &id);
     getchar();
 
-    int idx = procurar_por_id(id);
+    int idx = procurar_por_id(livros, total_livros, id);
     if (idx == -1) {
         printf("Livro nao encontrado.\n");
         return;
@@ -127,13 +124,13 @@ void emprestar_livro(void) {
     printf("Livro \"%s\" emprestado com sucesso.\n", livros[idx].titulo);
 }
 
-void devolver_livro(void) {
+void devolver_livro(Livro livros[], int total_livros) {
     int id;
     printf("Digite o ID do livro: ");
     scanf("%d", &id);
     getchar();
 
-    int idx = procurar_por_id(id);
+    int idx = procurar_por_id(livros, total_livros, id);
     if (idx == -1) {
         printf("Livro nao encontrado.\n");
         return;
@@ -148,27 +145,27 @@ void devolver_livro(void) {
     printf("Livro \"%s\" devolvido com sucesso.\n", livros[idx].titulo);
 }
 
-void remover_livro(void) {
+void remover_livro(Livro livros[], int *total_livros) {
     int id;
     printf("Digite o ID do livro: ");
     scanf("%d", &id);
     getchar();
 
-    int idx = procurar_por_id(id);
+    int idx = procurar_por_id(livros, *total_livros, id);
     if (idx == -1) {
         printf("Livro nao encontrado.\n");
         return;
     }
 
-    for (int i = idx; i < total_livros - 1; i++) {
+    for (int i = idx; i < *total_livros - 1; i++) {
         livros[i] = livros[i + 1];
     }
-    total_livros--;
+    (*total_livros)--;
 
     printf("Livro removido com sucesso.\n");
 }
 
-void salvar_em_arquivo(void) {
+void salvar_em_arquivo(Livro livros[], int total_livros) {
     FILE *arquivo = fopen("livros.txt", "w");
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo para salvar.\n");
@@ -185,20 +182,20 @@ void salvar_em_arquivo(void) {
     printf("Dados salvos em livros.txt\n");
 }
 
-void carregar_do_arquivo(void) {
+void carregar_do_arquivo(Livro livros[], int *total_livros) {
     FILE *arquivo = fopen("livros.txt", "r");
     if (arquivo == NULL) {
         return;
     }
 
-    while (total_livros < MAX_LIVROS &&
+    while (*total_livros < MAX_LIVROS &&
            fscanf(arquivo, "%d;%99[^;];%99[^;];%d;%d\n",
-                  &livros[total_livros].id,
-                  livros[total_livros].titulo,
-                  livros[total_livros].autor,
-                  &livros[total_livros].ano,
-                  &livros[total_livros].emprestado) == 5) {
-        total_livros++;
+                  &livros[*total_livros].id,
+                  livros[*total_livros].titulo,
+                  livros[*total_livros].autor,
+                  &livros[*total_livros].ano,
+                  &livros[*total_livros].emprestado) == 5) {
+        (*total_livros)++;
     }
 
     fclose(arquivo);

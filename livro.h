@@ -12,21 +12,18 @@ typedef struct {
     int  emprestado;
 } Livro;
 
-extern Livro livros[MAX_LIVROS];
-extern int total_livros;
-
 void ler_texto(char *destino);
 int contem(const char *texto, const char *termo);
-int procurar_por_id(int id);
+int procurar_por_id(Livro livros[], int total_livros, int id);
 
-void cadastrar_livro(void);
-void listar_livros(void);
-void buscar_livro(void);
-void emprestar_livro(void);
-void devolver_livro(void);
-void remover_livro(void);
+void cadastrar_livro(Livro livros[], int *total_livros);
+void listar_livros(Livro livros[], int total_livros);
+void buscar_livro(Livro livros[], int total_livros);
+void emprestar_livro(Livro livros[], int total_livros);
+void devolver_livro(Livro livros[], int total_livros);
+void remover_livro(Livro livros[], int *total_livros);
 
-void salvar_em_arquivo(void);
-void carregar_do_arquivo(void);
+void salvar_em_arquivo(Livro livros[], int total_livros);
+void carregar_do_arquivo(Livro livros[], int *total_livros);
 
 #endif
